@@ -1,0 +1,6 @@
+#SERVER
+# keys starting with SVR_ will be sended to server side
+SVR_MONGOSTRING="mongodb://127.0.0.1:27017/activityman"
+
+#CLIENT
+# keys starting with APP_ will be sended to client side T*T

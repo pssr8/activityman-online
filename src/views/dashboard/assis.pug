@@ -1,0 +1,46 @@
+//- ActivityMan-online | An online activity manager
+//- Copyright (C) 2023  pssr8
+//- 
+//- This program is free software: you can redistribute it and/or modify
+//- it under the terms of the GNU General Public License as published by
+//- the Free Software Foundation, either version 3 of the License, or
+//- any later version.
+//- 
+//- This program is distributed in the hope that it will be useful,
+//- but WITHOUT ANY WARRANTY; without even the implied warranty of
+//- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//- GNU General Public License for more details.
+//- 
+//- You should have received a copy of the GNU General Public License
+//- along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+
+extends ./base.pug
+
+block cuerpo 
+    h2 Assis T*T
+    table(border="1")
+        thead
+            tr
+                th Edit
+                th Name
+                th Contacts
+                th Address
+                th Grade
+                th Birth
+                th Sexe
+                th Note
+        tbody
+            each assi in assis 
+                tr
+                    td 
+                        a(href=`/assi-edit/${encodeURIComponent(assi.id)}`) 
+                            button /assi-edit/#{encodeURIComponent(assi.id)}
+                    td #{assi.name.first}
+                    td #{assi.contacts}
+                    td #{assi.address}
+                    td #{assi.grade}
+                    td #{assi.birth}
+                    td #{assi.sexe}
+                    td #{assi.note}

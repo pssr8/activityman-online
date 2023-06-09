@@ -1,0 +1,90 @@
+{
+    "psi-header.variables": [
+        [
+            "author",
+            "myuser"
+        ],
+        [
+            "url",
+            "<https://my.github.com/myuser>"
+        ]
+    ],
+    "psi-header.templates": [
+        {
+            "language": ".js",
+            "template": [
+                "ActivityMan-online | An online activity manager",
+                "Copyright (C) <<year>>  pssr8",
+                "",
+                "This program is free software: you can redistribute it and/or modify",
+                "it under the terms of the GNU General Public License as published by",
+                "the Free Software Foundation, either version 3 of the License, or",
+                "any later version.",
+                "",
+                "This program is distributed in the hope that it will be useful,",
+                "but WITHOUT ANY WARRANTY; without even the implied warranty of",
+                "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+                "GNU General Public License for more details.",
+                "",
+                "You should have received a copy of the GNU General Public License",
+                "along with this program.  If not, see <https://www.gnu.org/licenses/>."
+            ],
+            "changeLogCaption": "HISTORY:",
+            "changeLogHeaderLineCount": 2,
+            "changeLogEntryTemplate": [
+                "<<dateformat('YYYY-MM-DD')>>\t<<initials>>\t"
+            ]
+        },
+        {
+            "language": ".pug",
+            "template": [
+                "ActivityMan-online | An online activity manager",
+                "Copyright (C) <<year>>  pssr8",
+                "",
+                "This program is free software: you can redistribute it and/or modify",
+                "it under the terms of the GNU General Public License as published by",
+                "the Free Software Foundation, either version 3 of the License, or",
+                "any later version.",
+                "",
+                "This program is distributed in the hope that it will be useful,",
+                "but WITHOUT ANY WARRANTY; without even the implied warranty of",
+                "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+                "GNU General Public License for more details.",
+                "",
+                "You should have received a copy of the GNU General Public License",
+                "along with this program.  If not, see <https://www.gnu.org/licenses/>."
+            ],
+            "changeLogCaption": "HISTORY:",
+            "changeLogHeaderLineCount": 2,
+            "changeLogEntryTemplate": [
+                "<<dateformat('YYYY-MM-DD')>>\t<<initials>>\t"
+            ]
+        },
+        {
+            "language": ".scss",
+            "template": [
+                "ActivityMan-online | An online activity manager",
+                "Copyright (C) <<year>>  pssr8",
+                "",
+                "This program is free software: you can redistribute it and/or modify",
+                "it under the terms of the GNU General Public License as published by",
+                "the Free Software Foundation, either version 3 of the License, or",
+                "any later version.",
+                "",
+                "This program is distributed in the hope that it will be useful,",
+                "but WITHOUT ANY WARRANTY; without even the implied warranty of",
+                "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+                "GNU General Public License for more details.",
+                "",
+                "You should have received a copy of the GNU General Public License",
+                "along with this program.  If not, see <https://www.gnu.org/licenses/>."
+            ],
+            "changeLogCaption": "HISTORY:",
+            "changeLogHeaderLineCount": 2,
+            "changeLogEntryTemplate": [
+                "<<dateformat('YYYY-MM-DD')>>\t<<initials>>\t"
+            ]
+        },
+    ],
+    "github.gitProtocol": "ssh"
+}
