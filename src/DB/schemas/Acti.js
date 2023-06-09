@@ -17,7 +17,6 @@
  */
 
 
-
 const { model, SchemaTypes, Schema } = require("mongoose");
 const { MultiLang } = require("./Lang");
 const { Assi } = require("./Assi");
