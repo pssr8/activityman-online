@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "MODE=development PORT=8000 nodemon src/index.js",
-    "dev:sass": "sass \"./src/sass/index.scss\":\"./public/styles/dist/index.css\" \"./src/sass/dashboard/_index.scss\":\"./public/styles/dist/dashboard.css\" --watch"
+    "dev:sass": "sass \"./src/sass/index.scss\":\"./public/styles/dist/index.css\" \"./src/sass/dashboard/_index.scss\":\"./public/styles/dist/dashboard.css\" --watch",
+    "show:c": "cat ./terms-and-conditions.txt | less",
+    "show:w": "cat ./warranty.txt | less"
   },
   "repository": {
     "type": "git",
