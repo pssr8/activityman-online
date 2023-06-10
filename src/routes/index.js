@@ -20,5 +20,6 @@ const { Router } = require("express");
 let router = new Router();
 
 router.use('/', require('./routes.dashb.js'));
+router.use('/', require('./routes.auth.js'));
 
 module.exports = router;
