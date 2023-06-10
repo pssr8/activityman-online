@@ -20,11 +20,16 @@ extends ../base.pug
 
 block chassis
     .login-div 
-        form(action="/", method="post").login 
-            label(for="usrn") Username
-            input#usrn(type="text")
+        p=addText||''
+        form(action="/login", method="post").login 
+            label(for="usrn") Username:
             br
-            label(for="pswd") Password
-            input#pswd(type="text")
+            input#usrn(type="text", name="username")
+            br
+            br
+            label(for="pswd") Password:
+            br
+            input#pswd(type="text", name="password")
+            br
             br
             button(type="submit") Submit

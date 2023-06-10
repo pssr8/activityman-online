@@ -18,32 +18,38 @@
 
 const { Router } = require("express");
 const useDB = require('../DB');
+const { requireAuth } = require("../auth");
 const router = new Router();
 
+
 router.get('/', async (req, res) => {
-    const DB = await useDB;
+    requireAuth(req, res);
     res.render('dashboard/home', { title: 'Home', appChassis: res.appChassis });
 })
 
 router.get('/actis', async (req, res) => {
+    requireAuth(req, res);
     const DB = await useDB;
     let actis = await DB.actis.getAll();
     res.render('dashboard/actis', { title: 'Activities', appChassis: res.appChassis, actis });
 })
 
 router.get('/assis', async (req, res) => {
+    requireAuth(req, res);
     const DB = await useDB;
     let assis = await DB.assis.getAll();
     res.render('dashboard/assis', { title: 'Assistants', appChassis: res.appChassis, assis });
 })
 
 router.get('/users', async (req, res) => {
+    requireAuth(req, res);
     const DB = await useDB;
     let users = await DB.users.getAll();
     res.render('dashboard/users', { title: 'Users', appChassis: res.appChassis, users });
 })
 
 router.get('/langs', async (req, res) => {
+    requireAuth(req, res);
     const DB = await useDB;
     let langs = await DB.langs.list();
     res.render('dashboard/langs', { title: 'Languages', appChassis: res.appChassis, langs });
@@ -51,6 +57,7 @@ router.get('/langs', async (req, res) => {
 
 // EDIT
 router.get('/assi-edit/:oid', async (req, res) => {
+    requireAuth(req, res);
     const DB = await useDB;
     let {oid} = req.params;
     let assi = await DB.assis.get(oid);
@@ -63,6 +70,7 @@ router.get('/assi-edit/:oid', async (req, res) => {
 })
 
 router.get('/acti-edit/:oid', async (req, res) => {
+    requireAuth(req, res);
     const DB = await useDB;
     let {oid} = req.params;
     let acti = await DB.actis.get(oid);

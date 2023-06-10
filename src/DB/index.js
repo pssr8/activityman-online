@@ -230,7 +230,7 @@ const DBLoad = async () => {
 
             },
             findUser: async (username) => {
-                let user = User.find({ username })
+                let user = User.findOne({ username })
                 if (user) {
                     return user;
                 } else {
@@ -294,7 +294,8 @@ const DBLoad = async () => {
             verifyLogin: async (username, password) => {
                 try {
                     let user = await DB.users.findUser(username);
-
+                    console.dir(user);
+                    console.log(user.password === password, user.password, password);
                     if (user.password === password) {
                         return user;
                     }

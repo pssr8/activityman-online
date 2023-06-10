@@ -22,11 +22,10 @@ const router = new Router();
 
 router.get('/login', (req, res) => {
     if (req.session.loggedin) {
-        res.redirect('/');
+        res.redirect(req.session.lastPage || '/');
     } else {
         res.render('auth/login', { title: 'Log in' })
     }
-
 })
 
 router.get('/logout', (req, res) => {
@@ -37,11 +36,11 @@ router.get('/logout', (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         await auth.loginWith(req);
-        res.send(202).send('Succesfully authenticated.')
+        res.redirect(req.session.lastPage || '/');
     } catch (e) {
-        res.status(404).send('Got an error when trying to authenticate you.')
+        res.status(404).render('auth/login', { title: 'Log in', addText: 'Incorrect username or password!' })
     }
-    
+
 })
 
 module.exports = router;
