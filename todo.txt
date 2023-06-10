@@ -1,2 +1,3 @@
  - create users interface
     - create '/add-user' post-entry; with redirect to lastPage
+    - hacer opcion para modificar un usuario
