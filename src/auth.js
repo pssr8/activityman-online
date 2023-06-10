@@ -27,7 +27,7 @@ const auth = {
             saveUninitialized: true
         }));
     },
-    loginWith: async function (username, password) {
+    loginWith: async function (req, username, password) {
         try {
             if (username && password) {
                 const DB = await useDB;
@@ -39,10 +39,8 @@ const auth = {
                 }
                 // If the account exists
                 // Authenticate the user
-                request.session.loggedin = true;
-                request.session.username = user.username;
-                // Redirect to home page
-                response.redirect('/home');
+                req.session.loggedin = true;
+                req.session.username = user.username;
             } else {
                 throw new Error('Incorrect Username or Password!');
             }
