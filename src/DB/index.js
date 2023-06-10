@@ -296,7 +296,7 @@ const DBLoad = async () => {
                     let user = await DB.users.findUser(username);
 
                     if (user.password === password) {
-                        return exportUser(user);
+                        return user;
                     }
 
                 } catch (e) {

@@ -18,9 +18,11 @@
 
 
 const express = require('express');
+const { sensitiveHeaders } = require('http2');
 const app = express();
-const path = require('path') 
- 
+const path = require('path');
+const auth = require('./auth');
+
 
 // settings
 app.set('view engine', 'pug');
@@ -29,6 +31,9 @@ app.set('port', process.env.PORT)
 
 
 // middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+auth.useMiddleware(app);
 app.use('/', express.static(path.join(__dirname, '../public')))
 app.use(require('./middlewares/app-chassis'))
 
