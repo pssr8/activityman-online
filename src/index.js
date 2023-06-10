@@ -21,5 +21,11 @@ const app = require("./app");
 
 const port = app.get('port');
 app.listen(port, () => {
+    console.log(`
+Activityman-online  Copyright (C) <year>  <name of author>
+This program comes with ABSOLUTELY NO WARRANTY; for details type \`npm run show:w'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type \`npm run show:c' for details.
+`)
     console.log('ActivityMan Online\n\n\tListening on port ' + port + '\n\n')
 })
