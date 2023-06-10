@@ -28,15 +28,54 @@ block cuerpo
                 th name
                 th username
                 th permissions
+                th isMain
                 th delete
         tbody 
-            tr 
-                each user in users
+            each user in users
+                tr 
                     td #{user.name}
                     td #{user.username}
                     td #{JSON.stringify(user.permissions)}
+                    td #{user.isAdmin()}
                     td
-                        button X
+                        if !user.isAdmin()
+                            button X
+                        else 
+                            span.muted Not allowed
+    .add-user
+        form(action="/add-user", method="post") 
+            hr
+            table 
+                thead 
+                    tr 
+                        th Name
+                        th Username
+                        th Permissions
+                        th New password
+                tbody
+                    tr 
+                        td 
+                            input#name(type="text", name="name", required)
+                        td
+                            input#username(type="text", name="username", required)
+                        td
+                            label(for="actis-control") 
+                                input#actis-control(type="checkbox", name="actis-control")
+                                span Control activities
+                            br
+                            label(for="assis-control") 
+                                input#assis-control(type="checkbox", name="assis-control")
+                                span Control assistants
+                            br
+                            label(for="users-control") 
+                                input#users-control(type="checkbox", name="users-control")
+                                span Control users
+                        td 
+                            input#password(type="text", name="password")
+            button(type="submit") + Add user
+            
+
     
-    .add-user 
-        | add user T*T
+    
+    //- h3 json: 
+    //- pre=JSON.stringify(users, null, 4)

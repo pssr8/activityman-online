@@ -44,10 +44,10 @@ const auth = {
                 // If the account exists
                 // Authenticate the user
                 req.session.loggedin = true;
-                req.session.user = DB.exportUser(user);
+                req.session.user = user;
                 console.dir(req.session);
             } else {
-                console.log('not provided')
+                console.log('Not username or password provided')
                 throw new Error('Incorrect Username or Password!');
             }
         } catch (e) {

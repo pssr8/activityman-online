@@ -315,8 +315,8 @@ const DBLoad = async () => {
             return { id, name, description, assis, date, created, updated, type, results, note };
         },
         exportUser: (user) => {
-            let { name, permissions, username, password, id } = user;
-            return { name, permissions, username, password, id };
+            let { name, permissions, username, password, id, isAdmin } = user;
+            return { name, permissions, username, password, id, isAdmin };
         },
         exportLang: (lang) => {
             let { code, name, main } = lang;
