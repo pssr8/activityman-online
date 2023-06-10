@@ -1,2 +1,0 @@
- - add authentication to forbidden pages
- - create login page
