@@ -295,7 +295,7 @@ const DBLoad = async () => {
                 try {
                     let user = await DB.users.findUser(username);
                     console.dir(user);
-                    console.log(user.password === password, user.password, password);
+                    // console.log(user.password === password, user.password, password);
                     if (user.password === password) {
                         return user;
                     }
@@ -315,8 +315,8 @@ const DBLoad = async () => {
             return { id, name, description, assis, date, created, updated, type, results, note };
         },
         exportUser: (user) => {
-            let { name, permissions, username, id } = user;
-            return { name, permissions, username, id };
+            let { name, permissions, username, password, id } = user;
+            return { name, permissions, username, password, id };
         },
         exportLang: (lang) => {
             let { code, name, main } = lang;

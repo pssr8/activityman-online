@@ -31,7 +31,7 @@ const auth = {
     loginWith: async function (req) {
         try {
             let { username, password } = req.body;
-            console.log(username, password)
+            // console.log(username, password)
             if (username && password) {
                 const DB = await useDB;
                 let user;
@@ -39,16 +39,16 @@ const auth = {
                     user = await DB.AUTH.verifyLogin(username, password);
                 } catch (e) {
                     console.log(e)
-                    // throw new Error('Incorrect Username or Password!');
+                    throw new Error('Incorrect Username or Password!');
                 }
                 // If the account exists
                 // Authenticate the user
                 req.session.loggedin = true;
-                req.session.username = user.username;
+                req.session.user = DB.exportUser(user);
                 console.dir(req.session);
             } else {
                 console.log('not provided')
-                // throw new Error('Incorrect Username or Password!');
+                throw new Error('Incorrect Username or Password!');
             }
         } catch (e) {
             throw e;
