@@ -17,6 +17,7 @@
  */
 
 const useDB = require('./DB');
+const session = require('express-session');
 
 
 const auth = {
@@ -27,8 +28,9 @@ const auth = {
             saveUninitialized: true
         }));
     },
-    loginWith: async function (req, username, password) {
+    loginWith: async function (req) {
         try {
+            let { username, password } = req.session;
             if (username && password) {
                 const DB = await useDB;
                 let user;
@@ -47,6 +49,10 @@ const auth = {
         } catch (e) {
             throw e;
         }
+    },
+    logout: function (req) {
+        req.session.loggedin = false;
+        req.session.username = null;
     }
 }
 

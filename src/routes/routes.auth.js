@@ -17,8 +17,31 @@
  */
 
 const { Router } = require("express");
+const auth = require("../auth");
 const router = new Router();
 
+router.get('/login', (req, res) => {
+    if (req.session.loggedin) {
+        res.redirect('/');
+    } else {
+        res.render('auth/login', { title: 'Log in' })
+    }
 
+})
+
+router.get('/logout', (req, res) => {
+    auth.logout(req);
+    res.send('Logged out!')
+})
+
+router.post('/login', async (req, res) => {
+    try {
+        await auth.loginWith(req);
+        res.send(202).send('Succesfully authenticated.')
+    } catch (e) {
+        res.status(404).send('Got an error when trying to authenticate you.')
+    }
+    
+})
 
 module.exports = router;
