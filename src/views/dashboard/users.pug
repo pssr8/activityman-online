@@ -43,7 +43,7 @@ block cuerpo
                         else 
                             span.muted Not allowed
     .add-user
-        form(action="/add-user", method="post") 
+        form(action="/set-user", method="post") 
             hr
             table 
                 thead 
@@ -55,7 +55,7 @@ block cuerpo
                 tbody
                     tr 
                         td 
-                            input#name(type="text", name="name", required)
+                            input#name(type="text", name="name")
                         td
                             input#username(type="text", name="username", required)
                         td
@@ -72,7 +72,7 @@ block cuerpo
                                 span Control users
                         td 
                             input#password(type="text", name="password")
-            button(type="submit") + Add user
+            button(type="submit") > Set user
             
 
     

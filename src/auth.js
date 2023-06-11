@@ -25,7 +25,10 @@ const auth = {
         app.use(session({
             secret: 'unarequetecontraseña',
             resave: true,
-            saveUninitialized: true
+            saveUninitialized: true,
+            cookie: {
+                maxAge: 0x9a7ec800 // 1 month
+            }
         }));
     },
     loginWith: async function (req) {
@@ -58,15 +61,13 @@ const auth = {
         req.session.loggedin = false;
         req.session.username = null;
     },
-    requireAuth: function (req, res) {
+    requireAuth: async function (req, res) {
         console.dir(req.session);
         if (!req.session.loggedin) {
             req.session.lastPage = req.url || '/';
             res.render('auth/login', { title: 'Log in', addText: 'You have to log in first...' });
-            return true;
-        } else {
-            return false;
         }
+        return new Boolean(req.session.loggedin);
     }
 }
 
