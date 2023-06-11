@@ -31,23 +31,26 @@ let UserSchema = new Schema({
     admin: Boolean
 });
 
-UserSchema.methods.modify = function (changes) {
-    ['name', 'username', 'password'].forEach(key => {
-        if (changes[key]) {
+UserSchema.methods.modify = async function (changes) {
+    for (let key of ['name', 'password']) {
+        if(changes[key]) {
             this[key] = changes[key];
         }
-    })
+    }
+    await this.save();
 }
-UserSchema.methods.allow = function (permissionKey) {
+UserSchema.methods.allow = async function (permissionKey) {
     if (permissionKey in this.permissions) {
         this.permissions[permissionKey] = true;
+        await this.save();
     } else {
         throw new Error("Permission key ('" + permissionKey + "') doesn't exists");
     }
 }
-UserSchema.methods.disallow = function (permissionKey) {
+UserSchema.methods.disallow = async function (permissionKey) {
     if (permissionKey in this.permissions) {
         this.permissions[permissionKey] = false;
+        await this.save();
     } else {
         throw new Error("Permission key ('" + permissionKey + "') doesn't exists");
     }

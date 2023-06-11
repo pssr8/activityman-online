@@ -48,16 +48,16 @@ block cuerpo
             table 
                 thead 
                     tr 
+                        th Username (ID)
                         th Name
-                        th Username
                         th Permissions
                         th New password
                 tbody
                     tr 
-                        td 
-                            input#name(type="text", name="name")
                         td
                             input#username(type="text", name="username", required)
+                        td 
+                            input#name(type="text", name="name")
                         td
                             label(for="actis-control") 
                                 input#actis-control(type="checkbox", name="actis-control")

@@ -73,8 +73,9 @@ const auth = {
                 req.session.loggedin = true;
                 req.session.user = user;
             } catch (e) {
-                console.log(e)
-                next(new Error('Incorrect Username or Password!'));
+                res.status(401).render('auth/login', { title: 'Log in', addText: 'You have to log in first...' });
+                console.log('Not logged in')
+                return false;
             }
             return true;
         }

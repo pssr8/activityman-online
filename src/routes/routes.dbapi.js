@@ -47,8 +47,7 @@ router.post('/set-user', async (req, res, next) => {
                     if (user.isAdmin() && !me.isAdmin()) {
                         throw 403;
                     }
-                    console.log('already exists')
-                    // user.modify({ name, username, password });
+                    await user.modify({ name, password });
 
                     /* for (let key of ['actis-control', 'assis-control', 'users-control']) {
                         if (req.body[key] === true) {
@@ -64,7 +63,8 @@ router.post('/set-user', async (req, res, next) => {
                 throw 403;
             }
 
-            res.json(req.body)
+            // res.json(req.body)
+            res.redirect(req.session.lastPage || '/');
         }
     } catch (e) {
         if (e == 403) {
