@@ -21,5 +21,6 @@ let router = new Router();
 
 router.use('/', require('./routes.dashb.js'));
 router.use('/', require('./routes.auth.js'));
+router.use('/', require('./routes.dbapi.js'));
 
 module.exports = router;

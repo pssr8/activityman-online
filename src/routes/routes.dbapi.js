@@ -18,10 +18,10 @@
 
 const { Router } = require("express");
 const useDB = require('../DB');
-const { requireAuth } = require("../auth");
+const { requireAuth, loginWith } = require("../auth");
 const router = new Router();
 
-router.post('/set-user', async (req, res) => {
+router.post('/set-user', async (req, res, next) => {
     /** 
      * format: 
      * name=string
@@ -32,21 +32,23 @@ router.post('/set-user', async (req, res) => {
      * users-control=boolean 
      **/
     try {
-    if (await requireAuth(req, res)) {
-        if (req.session.user.permissions.users_control) {
-            const { name, username, password } = req.body;
+        if (await requireAuth(req, res, next)) {
 
-            if (username & password) {
+            if (req.session.user.permissions.users_control) {
+                const { name, username, password } = req.body;
+                console.log('Setting user: ', name, username, password)
+                
                 const DB = await useDB;
+                let me = req.session.user;
+                let user = null;
                 let alreadyExists = await DB.users.findUser('' + username);
                 if (alreadyExists) {
-                    let user = alreadyExists;
-                    console.log(name, username, password)
-                    if (user.isAdmin() && !req.session.user.isAdmin()) {
+                    user = alreadyExists;
+                    if (user.isAdmin() && !me.isAdmin()) {
                         throw 403;
                     }
-
-                    user.modify({ name, username, password });
+                    console.log('already exists')
+                    // user.modify({ name, username, password });
 
                     /* for (let key of ['actis-control', 'assis-control', 'users-control']) {
                         if (req.body[key] === true) {
@@ -55,23 +57,23 @@ router.post('/set-user', async (req, res) => {
                             user.disallow(key);
                         }
                     } */
-
-
                 }
 
+                
+            } else {
+                throw 403;
             }
+
+            res.json(req.body)
+        }
+    } catch (e) {
+        if (e == 403) {
+            console.error('ERROR: Trying to set Admin user');
+            res.status(403).send("You don't have permission to set this user.");
         } else {
-            throw 403;
+            next(e)
         }
     }
-} catch (e) {
-    if (e == 403) {
-        console.error('ERROR: Trying to set Admin user');
-        res.status(403).send("You don't have permission to set this user.");
-    } else {
-        throw e;
-    }
-}
 })
 
 module.exports = router;

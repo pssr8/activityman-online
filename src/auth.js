@@ -34,21 +34,18 @@ const auth = {
     loginWith: async function (req) {
         try {
             let { username, password } = req.body;
-            // console.log(username, password)
+            console.log(username, password)
             if (username && password) {
                 const DB = await useDB;
-                let user;
                 try {
-                    user = await DB.AUTH.verifyLogin(username, password);
+                    // Authenticate the user
+                    let user = await DB.AUTH.verifyLogin(username, password);
+                    req.session.loggedin = true;
+                    req.session.user = user;
                 } catch (e) {
                     console.log(e)
                     throw new Error('Incorrect Username or Password!');
                 }
-                // If the account exists
-                // Authenticate the user
-                req.session.loggedin = true;
-                req.session.user = user;
-                console.dir(req.session);
             } else {
                 console.log('Not username or password provided')
                 throw new Error('Incorrect Username or Password!');
@@ -61,13 +58,26 @@ const auth = {
         req.session.loggedin = false;
         req.session.username = null;
     },
-    requireAuth: async function (req, res) {
-        console.dir(req.session);
+    requireAuth: async function (req, res, next) {
+        // console.log(req.session);
         if (!req.session.loggedin) {
             req.session.lastPage = req.url || '/';
-            res.render('auth/login', { title: 'Log in', addText: 'You have to log in first...' });
+            res.status(401).render('auth/login', { title: 'Log in', addText: 'You have to log in first...' });
+            console.log('Not logged in')
+            return false;
+        } else {
+            const DB = await useDB;
+            try {
+                let { username, password } = req.session.user;
+                let user = await DB.AUTH.verifyLogin(username, password);
+                req.session.loggedin = true;
+                req.session.user = user;
+            } catch (e) {
+                console.log(e)
+                next(new Error('Incorrect Username or Password!'));
+            }
+            return true;
         }
-        return new Boolean(req.session.loggedin);
     }
 }
 

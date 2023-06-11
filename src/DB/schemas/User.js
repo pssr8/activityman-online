@@ -27,7 +27,8 @@ let UserSchema = new Schema({
         users_control: Boolean,
     },
     username: String,
-    password: String
+    password: String,
+    admin: Boolean
 });
 
 UserSchema.methods.modify = function (changes) {
@@ -52,12 +53,7 @@ UserSchema.methods.disallow = function (permissionKey) {
     }
 }
 UserSchema.methods.isAdmin = function () {
-    for (const permKey in this.permissions) {
-        if (this.permissions[permKey] == false) {
-            return false;
-        }
-    }
-    return true;
+    return this.admin;
 }
 
 

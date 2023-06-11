@@ -217,18 +217,6 @@ const DBLoad = async () => {
             getAll: () => {
                 return User.find();
             },
-            getAdmin: async () => {
-                let users = await DB.users.getAll();
-
-                for (const user of users) {
-                    if (user.isAdmin()) {
-                        return user;
-                    }
-                }
-
-                throw new Error("No admin user found.");
-
-            },
             findUser: async (username) => {
                 let user = User.findOne({ username })
                 if (user) {
@@ -236,11 +224,39 @@ const DBLoad = async () => {
                 } else {
                     throw new Error("User " + username + " not found.");
                 }
+            },
+            admin: async () => {
+                let adminUser = await User.findOne({ admin: true });
+                if (adminUser) {
+                    return adminUser;
+                } else {
+                    throw new Error("No admin user.")
+                }
+            },
+            changeAdmin: async (username) => {
+                let user = await User.findOne({ username });
+                if (user) {
+                    let oldAdmin = await User.findOne({ admin: true });
+
+                    oldAdmin.admin = false;
+                    user.admin = true;
+
+                    await Promise.all([
+                        oldAdmin.save(),
+                        user.save(),
+                    ]);
+
+                    return true;
+
+                } else {
+                    throw new Error("The user you want to make admin doesn't exists.")
+                }
             }
+
         },
         langs: {
             add: async (code) => {
-                let exist = (await Lang.find({ code })).length > 0;
+                let exist = (await Lang.findOne({ code })).length > 0;
                 if (!exist) {
                     let newLang = await Lang.create({
                         code,
@@ -294,10 +310,12 @@ const DBLoad = async () => {
             verifyLogin: async (username, password) => {
                 try {
                     let user = await DB.users.findUser(username);
-                    console.dir(user);
-                    // console.log(user.password === password, user.password, password);
+                    // console.dir(user);
+                    console.log('login: ', user.password === password, user.password, password);
                     if (user.password === password) {
                         return user;
+                    } else {
+                        throw new Error('Incorrect username or password!')
                     }
 
                 } catch (e) {
@@ -315,8 +333,8 @@ const DBLoad = async () => {
             return { id, name, description, assis, date, created, updated, type, results, note };
         },
         exportUser: (user) => {
-            let { name, permissions, username, password, id, isAdmin } = user;
-            return { name, permissions, username, password, id, isAdmin };
+            let { name, permissions, username, password, id, isAdmin, admin } = user;
+            return { name, permissions, username, password, id, isAdmin, admin };
         },
         exportLang: (lang) => {
             let { code, name, main } = lang;
@@ -337,7 +355,7 @@ const DBLoad = async () => {
 
     // set users
     try { // try getting admin
-        await DB.users.getAdmin();
+        await DB.users.admin();
     } catch (e) { // if no admin
         console.log('No admin-user found. Creating one...')
         let admin = await User.create({
@@ -348,10 +366,11 @@ const DBLoad = async () => {
                 users_control: true,
             },
             username: 'Admin',
-            password: '0000'
+            password: '0000',
+            admin: true
         })
         DB.firstTime = true;
-        console.log('Created user ' + admin.id);
+        console.log('Created user ' + admin.id + '.\nusername=Admin\npassword=0000');
     }
 
     return DB;
