@@ -192,9 +192,9 @@ const DBLoad = async () => {
                 let user = await User.create({
                     name: name | '',
                     permissions: {
-                        actis_control: true,
-                        assis_control: true,
-                        users_control: true,
+                        actis_control: false,
+                        assis_control: false,
+                        users_control: false,
                     },
                     username: name | '',
                     password: ''

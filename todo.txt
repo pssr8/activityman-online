@@ -1,3 +1,5 @@
  - create users interface
     - create '/add-user' post-entry; with redirect to lastPage
     - hacer opcion para modificar un usuario
+
+T*T Por alguna razón los usuarios salen sin nombre 

@@ -31,15 +31,17 @@ block cuerpo
                 th isAdmin
                 th delete
         tbody 
-            each user in users
+            each eachUser in users
                 tr 
-                    td #{user.name}
-                    td #{user.username}
-                    td #{JSON.stringify(user.permissions)}
-                    td #{user.isAdmin()}
+                    td #{eachUser.name}
+                    td #{eachUser.username}
+                    td #{JSON.stringify(eachUser.permissions)}
+                    td #{eachUser.isAdmin()}
                     td
-                        if !user.isAdmin()
-                            button X
+                        if !eachUser.isAdmin()
+                            form(action="/delete-user", method="post")
+                                input(type="hidden", name="username", value=eachUser.username) 
+                                button(type="submit") X
                         else 
                             span.muted Not allowed
     .add-user
