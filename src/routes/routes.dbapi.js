@@ -18,7 +18,9 @@
 
 const { Router } = require("express");
 const useDB = require('../DB');
-const { requireAuth, loginWith } = require("../auth");
+const { requireAuth } = require("../auth");
+const { handleResponseCode } = require("../functions/handleErrors");
+const { checkPermissionsFor, ifIsAdmin } = require('../functions/dbapi');
 const router = new Router();
 
 router.post('/set-user', async (req, res, next) => {
@@ -32,66 +34,101 @@ router.post('/set-user', async (req, res, next) => {
      * users-control?=boolean 
      **/
     try {
-        if (await requireAuth(req, res, next)) {
+        /* Check logged in and permissions */
+        checkPermissionsFor(['control-assis']);
 
-            if (req.session.user.permissions.users_control) {
-                const { name, username, password } = req.body;
-                if (!username) {
-                    console.error('Setting user with no username', username);
-                    throw 400;
-                } else {
-                    console.log('Setting user: ', name, username, password)
+        const { username, name, password } = req.body;
 
-                    const DB = await useDB;
-                    let me = req.session.user;
-                    let user = null;
-                    let alreadyExists = await DB.users.findUser('' + username);
-                    if (alreadyExists) {
-                        if (alreadyExists.isAdmin() && !me.isAdmin()) {
-                            console.error('ERROR: Trying to set Admin user');
-                            throw 403;
-                        } else {
-                            user = alreadyExists;
-                        }
-                    } else {
-                        if (password) {
-                            user = await DB.users.add(username, password);
-                        } else {
-                            console.error('No password provided');
-                            throw 400;
-                        }
-                    }
+        /* If no username provided */
+        if (!username) {
+            console.error(`Wrong params. username: '${username}'`);
+            throw 400;
+        }
 
-                    if (name) {
-                        user.name = name;
-                    }
-                    if (password) {
-                        user.password = password;
-                    }
+        console.log('Setting user: ', username, name, password);
 
-                    console.log(user);
+        const DB = await useDB;
+        let me = req.session.user;
+        let user = await DB.users.findUser('' + username);
 
-                    await user.save();
-
-
-                }
-            } else {
-                console.error('ERROR: Trying to edit users without users_control permission.');
-                throw 403;
+        /* If user not found. Create a new user */
+        if (!user) {
+            /* If no password provided */
+            if (!password) {
+                throw 400;
             }
 
-            // res.json(req.body)
-            res.redirect('/users');
+            user = await DB.users.add(username, password);
+
         }
+
+        /* If user is admin */
+        ifIsAdmin(user, me);
+
+        if (name) {
+            user.name = name;
+        }
+        if (password) {
+            user.password = password;
+        }
+
+        await user.save();
+
+        res.redirect('/users');
+
     } catch (e) {
-        if (e == 403) {
-            res.status(403).send("You don't have permission to set this user.");
-        } else if (e == 400) {
-            res.status(400).send("Bad request. If you are trying to create a new user provide an username and a password at least, if you are trying to edit an already existing user, provide an username at least.");
-        } else {
-            // res.status(500).render(e.message);
-            next(e);
+        handleResponseCode(e, res, next, {
+            403: "ERROR: Trying to edit users without users_control permission.",
+            400: "Bad request. If you are trying to create a new user provide an username and a password at least, if you are trying to edit an already existing user, provide an username at least."
+        })
+    }
+})
+
+
+router.post('/allow-the-user', async (req, res, next) => {
+    /** 
+     * format: 
+     * username=string
+     * to=string
+     **/
+    try {
+        /* Check logged in and permissions */
+        checkPermissionsFor(['control-assis']);
+
+        const { username, to } = req.body;
+
+        /* If no username provided */
+        if (!username || !to) {
+            console.error(`Wrong params. username: '${username}' | to: '${to}' `);
+            throw 400;
         }
+
+        console.log('Setting user: ', username, to)
+
+        const DB = await useDB;
+        let me = req.session.user;
+        let user = await DB.users.findUser('' + username);
+
+        /* If user not found */
+        if (!user) {
+            throw 404;
+        }
+
+        /* If user is admin */
+        ifIsAdmin(user, me);
+
+        // console.log(user);
+
+        await user.save();
+
+        // res.json(req.body)
+        res.redirect('/users');
+    } catch (e) {
+        handleResponseCode(e, res, next, {
+            403: "You don't have permission to change user permissions.",
+            400: `Bad request. You should provide a user name (to whom you are going to change permissions) and the permission you are going to change in the "to" parameter.\nFollowing the following body format: "username=string&to=string".\n"to" param can be either "control-actis", "control-assis", "control-users".`,
+            404: `User not found.`,
+        })
     }
 })
 
@@ -101,43 +138,46 @@ router.post('/delete-user', async (req, res, next) => {
      * username=string
      **/
     try {
-        if (await requireAuth(req, res, next)) {
+        /* Check logged in and permissions */
+        checkPermissionsFor(['control-assis']);
 
-            if (req.session.user.permissions.users_control) {
-                const { username } = req.body;
-                console.log('Deleting user: ', username)
+        const { username } = req.body;
 
-                const DB = await useDB;
-                let me = req.session.user;
-                let user = await DB.users.findUser('' + username);
-                if (user) {
-                    if (user.isAdmin() && !me.isAdmin()) {
-                        console.error('ERROR: Trying to delete Admin user');
-                        throw 403;
-                    }
-                    // deleting
-                    await DB.users.delete(user.id);
-                } else {
-                    console.error('Trying to delete false username: ' + username)
-                    throw 403;
-                }
-
-
-            } else {
-                console.error('ERROR: Trying to delete users without users_control permission.');
-                throw 403;
-            }
-
-            // res.json(req.body)
-            res.redirect('/users');
+        /* If no username provided */
+        if (!username) {
+            console.error(`Wrong params. username: '${username}'`);
+            throw 400;
         }
+
+        console.log('Deleting user: ', username)
+
+        const DB = await useDB;
+        let me = req.session.user;
+        let user = await DB.users.findUser('' + username);
+
+        /* If user not found */
+        if (!user) {
+            throw 404;
+        }
+
+        /* If user is admin */
+        ifIsAdmin(user, me);
+
+
+        /* Delete it */
+        await DB.users.delete(user.id);
+
+
+        // res.json(req.body)
+        res.redirect('/users');
+
     } catch (e) {
-        if (e == 403) {
-            res.status(403).send("You don't have permission to delete this user.");
-        } else {
-            next(e)
-        }
+        handleResponseCode(e, res, next, {
+            403: "You don't have permission to delete this user.",
+            400: `Bad request. you should provide a username that you are going to delete.`,
+            404: `User not found.`,
+        })
     }
-})
+});
 
 module.exports = router;
