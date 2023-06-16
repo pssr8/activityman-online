@@ -31,11 +31,15 @@ let UserSchema = new Schema({
     admin: Boolean
 });
 
-UserSchema.methods.modify = async function (changes) {
-    for (let key of ['name', 'password']) {
-        if(changes[key]) {
-            this[key] = changes[key];
-        }
+UserSchema.methods.changeName = async function (newName) {
+    if (newName) {
+        this.password = newName;
+    }
+    await this.save();
+}
+UserSchema.methods.changePassword = async function (newPassword) {
+    if (newPassword) {
+        this.password = newPassword;
     }
     await this.save();
 }

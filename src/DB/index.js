@@ -188,24 +188,23 @@ const DBLoad = async () => {
             }
         },
         users: {
-            add: async (name) => {
-                let user = await User.create({
-                    name: name | '',
-                    permissions: {
-                        actis_control: false,
-                        assis_control: false,
-                        users_control: false,
-                    },
-                    username: name | '',
-                    password: ''
-                });
-
-                return user;
-            },
-            modify: async (oid, changes) => {
-                let user = await User.findById(oid);
-                await user.modify(changes);
-                return user;
+            add: async (username, password) => {
+                if (username && password) {
+                    let user = await User.create({
+                        name: username,
+                        username: username,
+                        password: password,
+                        admin: false,
+                        permissions: {
+                            actis_control: false,
+                            assis_control: false,
+                            users_control: false
+                        },
+                    });
+                    return user;
+                } else {
+                    throw new Error('No username or password provided. You should provide a username and a password when creating a new user.');
+                }
             },
             delete: async (oid) => {
                 try {
