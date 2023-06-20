@@ -18,14 +18,17 @@
 
 const { Router } = require("express");
 const auth = require("../auth");
+const { handleResponseCode } = require("../middlewares/errorHandler");
 const router = new Router();
 
 router.get('/login', (req, res) => {
     if (req.session.loggedin) {
         res.redirect(req.session.lastPage || '/');
-    } else {
-        res.render('auth/login', { title: 'Log in' })
+        return;
     }
+
+    res.render('auth/login', { title: 'Log in' })
+
 })
 
 router.get('/logout', (req, res) => {
@@ -33,14 +36,16 @@ router.get('/logout', (req, res) => {
     res.send('Logged out!')
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
     try {
-        await auth.loginWith(req);
+        let {username, password} = req.body
+        await auth.setLogin(username, password, req);
         res.redirect(req.session.lastPage || '/');
     } catch (e) {
-        res.status(404).render('auth/login', { title: 'Log in', addText: 'Incorrect username or password!' })
+        handleResponseCode(e, res, next, {
+            401: (res) => res.status(401).render('auth/login', { title: 'Log in', addText: 'Incorrect username or password!' })
+        })
     }
-
 })
 
 module.exports = router;

@@ -31,28 +31,31 @@ const auth = {
             }
         }));
     },
-    loginWith: async function (req) {
-        try {
-            let { username, password } = req.body;
-            console.log(username, password)
-            if (username && password) {
-                const DB = await useDB;
-                try {
-                    // Authenticate the user
-                    let user = await DB.AUTH.verifyLogin(username, password);
-                    req.session.loggedin = true;
-                    req.session.user = user;
-                } catch (e) {
-                    console.log(e)
-                    throw new Error('Incorrect Username or Password!');
-                }
-            } else {
-                console.log('Not username or password provided')
-                throw new Error('Incorrect Username or Password!');
-            }
-        } catch (e) {
-            throw e;
+    setLogin: async function (username, password, req) {
+        console.log(username, password)
+
+        const error = new Error('Incorrect Username or Password!');
+
+        if (!username || !password) {
+            console.log('Not username or password provided')
+            throw error;
         }
+
+        const DB = await useDB;
+
+        try {
+            // Authenticate the user
+            let user = await DB.AUTH.verifyLogin(username, password);
+            req.session.loggedin = true;
+            req.session.user = user;
+        } catch (e) {
+            console.error(e);
+            req.session.loggedin = false;
+            req.session.user = null;
+            throw error;
+        }
+
+
     },
     logout: function (req) {
         req.session.loggedin = false;

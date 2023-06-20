@@ -18,7 +18,7 @@
 
 const { Router } = require("express");
 const useDB = require('../DB');
-const { handleResponseCode } = require("../functions/handleErrors");
+const { handleResponseCode } = require("../middlewares/errorHandler");
 const { checkPermissionsFor, ifIsAdmin } = require('../functions/dbapi');
 const router = new Router();
 
@@ -86,8 +86,8 @@ router.post('/set-user', async (req, res, next) => {
 
     } catch (e) {
         handleResponseCode(e, res, next, {
-            403: "ERROR: Trying to edit users without users_control permission.",
-            400: "Bad request. If you are trying to create a new user provide an username and a password at least, if you are trying to edit an already existing user, provide an username at least."
+            403: "ERROR: You don't have permission to edit this user.",
+            400: "Bad request.\nIf you are trying to create a new user provide an username and a password at least.\nIf you are trying to edit an already existing user, provide an username at least."
         })
     }
 })

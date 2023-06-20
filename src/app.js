@@ -40,5 +40,8 @@ app.use(require('./middlewares/app-chassis'))
 // routes
 app.use('/', require('./routes'))
 
+// errorHandler
+app.use(require('./middlewares/errorHandler'))
+
 
 module.exports = app;
