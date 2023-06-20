@@ -61,7 +61,7 @@ const auth = {
         req.session.loggedin = false;
         req.session.username = null;
     },
-    requireAuth: async function (req, res) {
+    requireAuth: async function (req) {
         // console.log(req.session);
         if (!req.session.loggedin) {
             req.session.lastPage = req.url || '/';
@@ -80,7 +80,6 @@ const auth = {
             console.log(e);
             throw 401;
         }
-
 
         return true;
     }

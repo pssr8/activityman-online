@@ -22,14 +22,17 @@ const { requireAuth } = require("../auth");
  * 
  * @param {string[]} perms 
  */
-async function checkPermissionsFor(perms) {
+async function checkPermissionsFor(perms, req) {
+    if (!req) {
+        throw new Error("Please provide a 'req' parameter.")
+    }
     /* If not logged in */
-    await requireAuth(req, res, next);
+    await requireAuth(req);
 
     /* If doesn't have enough permissions */
     for (const perm in perms) {
         if (req.session.user.permissions[perm] === false) {
-            console.error('ERROR: Trying to edit users without "' + perm + '" permission.');
+            console.error('ERROR: Missing required permission: "' + perm + '".');
             throw 403;
         }
     }

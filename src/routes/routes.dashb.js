@@ -60,15 +60,21 @@ router.get('/assis', async (req, res, next) => {
 
 router.get('/users', async (req, res, next) => {
     try {
-        if (await requireAuth(req, res, next)) {
-            const DB = await useDB;
-            let users = await DB.users.getAll();
-            res.render('dashboard/users', { title: 'Users', appChassis: res.appChassis, user: req.session.user, users });
+
+        await requireAuth(req, res, next)
+
+        let { user } = req.session;
+        if (!user.permissions['users_control']) {
+            throw 403;
         }
+
+        const DB = await useDB;
+        let users = await DB.users.getAll();
+        res.render('dashboard/users', { title: 'Users', appChassis: res.appChassis, user, users });
     } catch (e) {
         next(e);
     }
-})
+});
 
 router.get('/langs', async (req, res, next) => {
     try {

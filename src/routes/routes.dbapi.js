@@ -32,13 +32,13 @@ router.post('/set-user', async (req, res, next) => {
      * name?=string
      * username=string
      * password?=string
-     * actis-control?=boolean 
-     * assis-control?=boolean 
-     * users-control?=boolean 
+     * actis_control?=boolean 
+     * assis_control?=boolean 
+     * users_control?=boolean 
      **/
     try {
         /* Check logged in and permissions */
-        await checkPermissionsFor(['users_control']);
+        await checkPermissionsFor(['users_control'], req);
 
         const { username, name, password } = req.body;
 
@@ -48,7 +48,7 @@ router.post('/set-user', async (req, res, next) => {
             throw 400;
         }
 
-        console.log('Setting user: ', username, name, password);
+        console.log(`Setting user:\n\tusername: ${username}\n\tname: ${name}\n\tpassword: ${password}\n\tactis_control: ${req.body['actis_control']}\n\tassis_control: ${req.body['assis_control']}\n\tusers_control: ${req.body['users_control']}\n--------------------\n`);
 
         const DB = await useDB;
         let me = req.session.user;
@@ -62,7 +62,7 @@ router.post('/set-user', async (req, res, next) => {
             }
 
             user = await DB.users.add(username, password);
-            user.permissions['actis-control'] = true;
+            user.permissions['actis_control'] = true;
 
         }
 
@@ -76,8 +76,19 @@ router.post('/set-user', async (req, res, next) => {
             user.password = password;
         }
 
-        for (const perm of me.permissions) {
-            console.log(perm)
+        for (const perm of Object.keys(me.permissions)) {
+            let permValue = req.body[perm];
+            // console.log(perm, permValue)
+            /* if will allow */
+            if (permValue === 'true') {
+                console.log(`allow ${perm} for ${user.username}`)
+                user.permissions[perm] = true;
+                /* if will disallow */
+            } else if (permValue === 'false') {
+                console.log(`disallow ${perm} for ${user.username}`)
+                user.permissions[perm] = false;
+            }
+
         }
 
         await user.save();
@@ -92,10 +103,6 @@ router.post('/set-user', async (req, res, next) => {
     }
 })
 
-router.get('/set-user', (req, res) => {
-    res.redirect('/users');
-})
-
 
 router.post('/delete-user', async (req, res, next) => {
     /** 
@@ -104,7 +111,7 @@ router.post('/delete-user', async (req, res, next) => {
      **/
     try {
         /* Check logged in and permissions */
-        await checkPermissionsFor(['control-assis']);
+        await checkPermissionsFor(['control-assis'], req);
 
         const { username } = req.body;
 
@@ -144,5 +151,12 @@ router.post('/delete-user', async (req, res, next) => {
         })
     }
 });
+
+router.get('/set-user', (req, res) => {
+    res.redirect('/users');
+})
+router.get('/delete-user', (req, res) => {
+    res.redirect('/users');
+})
 
 module.exports = router;

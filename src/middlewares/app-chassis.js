@@ -40,7 +40,11 @@ module.exports = (req, res, next) => {
                 {
                     name: 'Languages',
                     pathname: '/langs',
-                }
+                },
+                {
+                    name: 'Logout',
+                    pathname: '/logout',
+                },
             ]
         },
         top: {

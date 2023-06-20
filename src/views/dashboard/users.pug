@@ -34,7 +34,7 @@ block cuerpo
             each eachUser in users
                 mixin allowButton(perm, isallow)
                     form(action="/set-user", method="post") 
-                        input(type="hidden", name=perm, value=isallow)
+                        input(type="hidden", name=perm, value=(new Boolean(!isallow)))
                         input(type="hidden", name="username", value=eachUser.username)
                         button(type="submit")=(isallow)? 'Disallow' : 'Allow'
                 tr 
