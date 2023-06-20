@@ -18,11 +18,14 @@
 
 const { Router } = require("express");
 const useDB = require('../DB');
-const { requireAuth } = require("../auth");
 const { handleResponseCode } = require("../functions/handleErrors");
 const { checkPermissionsFor, ifIsAdmin } = require('../functions/dbapi');
 const router = new Router();
 
+/**
+ * This entyr should
+ * - allow the client to change admin if is admin
+ */
 router.post('/set-user', async (req, res, next) => {
     /** 
      * format: 
@@ -35,7 +38,7 @@ router.post('/set-user', async (req, res, next) => {
      **/
     try {
         /* Check logged in and permissions */
-        checkPermissionsFor(['control-assis']);
+        await checkPermissionsFor(['users_control']);
 
         const { username, name, password } = req.body;
 
@@ -59,10 +62,11 @@ router.post('/set-user', async (req, res, next) => {
             }
 
             user = await DB.users.add(username, password);
+            user.permissions['actis-control'] = true;
 
         }
 
-        /* If user is admin */
+        /* If user is not admin */
         ifIsAdmin(user, me);
 
         if (name) {
@@ -70,6 +74,10 @@ router.post('/set-user', async (req, res, next) => {
         }
         if (password) {
             user.password = password;
+        }
+
+        for (const perm of me.permissions) {
+            console.log(perm)
         }
 
         await user.save();
@@ -84,53 +92,10 @@ router.post('/set-user', async (req, res, next) => {
     }
 })
 
-
-router.post('/allow-the-user', async (req, res, next) => {
-    /** 
-     * format: 
-     * username=string
-     * to=string
-     **/
-    try {
-        /* Check logged in and permissions */
-        checkPermissionsFor(['control-assis']);
-
-        const { username, to } = req.body;
-
-        /* If no username provided */
-        if (!username || !to) {
-            console.error(`Wrong params. username: '${username}' | to: '${to}' `);
-            throw 400;
-        }
-
-        console.log('Setting user: ', username, to)
-
-        const DB = await useDB;
-        let me = req.session.user;
-        let user = await DB.users.findUser('' + username);
-
-        /* If user not found */
-        if (!user) {
-            throw 404;
-        }
-
-        /* If user is admin */
-        ifIsAdmin(user, me);
-
-        // console.log(user);
-
-        await user.save();
-
-        // res.json(req.body)
-        res.redirect('/users');
-    } catch (e) {
-        handleResponseCode(e, res, next, {
-            403: "You don't have permission to change user permissions.",
-            400: `Bad request. You should provide a user name (to whom you are going to change permissions) and the permission you are going to change in the "to" parameter.\nFollowing the following body format: "username=string&to=string".\n"to" param can be either "control-actis", "control-assis", "control-users".`,
-            404: `User not found.`,
-        })
-    }
+router.get('/set-user', (req, res) => {
+    res.redirect('/users');
 })
+
 
 router.post('/delete-user', async (req, res, next) => {
     /** 
@@ -139,7 +104,7 @@ router.post('/delete-user', async (req, res, next) => {
      **/
     try {
         /* Check logged in and permissions */
-        checkPermissionsFor(['control-assis']);
+        await checkPermissionsFor(['control-assis']);
 
         const { username } = req.body;
 

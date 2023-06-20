@@ -22,7 +22,7 @@ extends ./base.pug
 
 block cuerpo 
     h2 Users
-    table 
+    table(border="1") 
         thead 
             tr 
                 th name
@@ -32,10 +32,31 @@ block cuerpo
                 th delete
         tbody 
             each eachUser in users
+                mixin allowButton(perm, isallow)
+                    form(action="/set-user", method="post") 
+                        input(type="hidden", name=perm, value=isallow)
+                        input(type="hidden", name="username", value=eachUser.username)
+                        button(type="submit")=(isallow)? 'Disallow' : 'Allow'
                 tr 
                     td #{eachUser.name}
                     td #{eachUser.username}
-                    td #{JSON.stringify(eachUser.permissions)}
+                    td 
+                        - let {'actis_control': actisC, 'assis_control': assisC, 'users_control': usersC} =eachUser.permissions
+                        div
+                            span Control-actis: #{actisC}
+                            br
+                            if !eachUser.isAdmin()
+                                +allowButton('actis_control', actisC)
+                        div
+                            span Control-assis: #{assisC}
+                            br
+                            if !eachUser.isAdmin()
+                                +allowButton('assis_control', assisC)
+                        div
+                            span Control-users: #{usersC}
+                            br
+                            if !eachUser.isAdmin()
+                                +allowButton('users_control', usersC)
                     td #{eachUser.isAdmin()}
                     td
                         if !eachUser.isAdmin()
@@ -60,19 +81,6 @@ block cuerpo
                             input#username(type="text", name="username", required)
                         td 
                             input#name(type="text", name="name")
-                        td
-                            label(for="actis-control") 
-                                input#actis-control(type="checkbox", name="actis-control")
-                                span Control activities
-                            br
-                            label(for="assis-control") 
-                                input#assis-control(type="checkbox", name="assis-control")
-                                span Control assistants
-                            br
-                            label(for="users-control") 
-                                input#users-control(type="checkbox", name="users-control")
-                                span Control users
-                        td 
                             input#password(type="text", name="password")
             button(type="submit") > Set user
             

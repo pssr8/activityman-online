@@ -58,27 +58,28 @@ const auth = {
         req.session.loggedin = false;
         req.session.username = null;
     },
-    requireAuth: async function (req, res, next) {
+    requireAuth: async function (req, res) {
         // console.log(req.session);
         if (!req.session.loggedin) {
             req.session.lastPage = req.url || '/';
-            res.status(401).render('auth/login', { title: 'Log in', addText: 'You have to log in first...' });
             console.log('Not logged in')
-            return false;
-        } else {
-            const DB = await useDB;
-            try {
-                let { username, password } = req.session.user;
-                let user = await DB.AUTH.verifyLogin(username, password);
-                req.session.loggedin = true;
-                req.session.user = user;
-            } catch (e) {
-                res.status(401).render('auth/login', { title: 'Log in', addText: 'You have to log in first...' });
-                console.log('Not logged in')
-                return false;
-            }
-            return true;
+            throw 401;
         }
+
+        const DB = await useDB;
+
+        try {
+            let { username, password } = req.session.user;
+            let user = await DB.AUTH.verifyLogin(username, password);
+            req.session.loggedin = true;
+            req.session.user = user;
+        } catch (e) {
+            console.log(e);
+            throw 401;
+        }
+
+
+        return true;
     }
 }
 
