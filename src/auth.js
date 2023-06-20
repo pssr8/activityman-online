@@ -34,7 +34,7 @@ const auth = {
     setLogin: async function (username, password, req) {
         console.log(username, password)
 
-        const error = new Error('Incorrect Username or Password!');
+        const error = 401/* new Error('Incorrect Username or Password!') */;
 
         if (!username || !password) {
             console.log('Not username or password provided')

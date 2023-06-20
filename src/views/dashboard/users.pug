@@ -71,9 +71,8 @@ block cuerpo
             table 
                 thead 
                     tr 
-                        th Username (ID)
+                        th Username (ID)*
                         th Name
-                        th Permissions
                         th New password
                 tbody
                     tr 
@@ -81,6 +80,7 @@ block cuerpo
                             input#username(type="text", name="username", required)
                         td 
                             input#name(type="text", name="name")
+                        td
                             input#password(type="text", name="password")
             button(type="submit") > Set user
             

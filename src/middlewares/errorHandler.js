@@ -43,15 +43,15 @@ const errorHandler = function (err, req, res, next) {
 
         /* else if err is a status code without handler */
         } else if (typeof err == 'number') { 
-            res.status(err).render(err);
+            res.status(err).send(err);
         }
 
         /* else if err is just an Error */
         console.error(err.stack);
-        res.status(500).render('Something went wrong.');
+        res.status(500).send('Something went wrong.');
     } catch (err2) {
         console.error(err2.stack);
-        res.status(500).render('Something went wrong.');
+        res.status(500).send('Something went wrong.');
     }
 };
 
