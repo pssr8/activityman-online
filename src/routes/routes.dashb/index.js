@@ -24,26 +24,16 @@ const router = new Router();
 
 router.get('/', async (req, res, next) => {
     try {
-        if (await requireAuth(req, res, next)) {
-            res.render('dashboard/home', { title: 'Home', appChassis: res.appChassis, user: req.session.user });
-        }
+        await requireAuth(req, res, next)
+        
+        res.render('dashboard/home', { title: 'Home', chassis: res.chassis });
+
     } catch (e) {
         next(e);
     }
 })
 
-router.get('/actis', async (req, res, next) => {
-    try {
-        if (await requireAuth(req, res, next)) {
-
-            const DB = await useDB;
-            let actis = await DB.actis.getAll();
-            res.render('dashboard/actis', { title: 'Activities', appChassis: res.appChassis, user: req.session.user, actis });
-        }
-    } catch (e) {
-        next(e);
-    }
-})
+router.use('/actis', require('./actis'));
 
 router.get('/assis', async (req, res, next) => {
     try {
@@ -103,7 +93,7 @@ router.get('/assi-edit/:oid', async (req, res, next) => {
             console.log("Couldn't find assi with oid '" + oid + "'. IP-", req.socket.remoteAddress)
             throw 404;
         }
-        
+
         res.render('dashboard/edit/assi', { title: 'Assistant editor', appChassis: res.appChassis, user: req.session.user, assi });
 
 

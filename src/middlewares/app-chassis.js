@@ -63,7 +63,7 @@ module.exports = (req, res, next) => {
         });
 
         res.chassis.nav = nav;
-
+        res.chassis.sessionUser = user;
         res.chassis.virtualPath = req.path.split('/').filter(Boolean).join('/');
 
     }

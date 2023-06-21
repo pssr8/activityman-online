@@ -20,5 +20,9 @@
 
 extends ./base.pug
 
+
+block title 
+    | Home T*T
+
 block cuerpo 
-    h2 Welcome home, #{user.name}!
+    h3 Welcome home, #{chassis.sessionUser.name}!

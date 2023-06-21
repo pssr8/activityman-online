@@ -18,8 +18,11 @@
 
 extends ./base.pug
 
+block title 
+    | Activities T*T
+
 block cuerpo 
-    h2 Actis T*T
+    - let actis = await DB.actis.getAll();
     table(border="1")
         thead
             tr

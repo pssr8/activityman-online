@@ -23,7 +23,9 @@ html(lang="en")
         link(rel="stylesheet", href="/styles/dist/index.css", type="text/css")
         block styles 
         block title-block
-            title #{title? (title+' – ') : ''}ActivityMan Online
+            title
+                | Activityman – 
+                block title
     body 
         .chassis 
             block chassis
