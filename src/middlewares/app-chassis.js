@@ -18,39 +18,54 @@
 
 
 module.exports = (req, res, next) => {
-    res.appChassis = {
-        bar: {
-            list: [
-                {
-                    name: 'Home',
-                    pathname: '/',
-                },
-                {
-                    name: 'Activities',
-                    pathname: '/actis',
-                },
-                {
-                    name: 'Assistants',
-                    pathname: '/assis',
-                },
-                {
-                    name: 'Users',
-                    pathname: '/users',
-                },
-                {
-                    name: 'Languages',
-                    pathname: '/langs',
-                },
-                {
-                    name: 'Logout',
-                    pathname: '/logout',
-                },
-            ]
-        },
-        top: {
-            virtualPath: req.path.split('/').filter(Boolean).join('/')
-        }
-    }
+    if (req.session.loggedin) {
 
+        res.chassis = {};
+
+        let nav = [
+            {
+                name: 'Home',
+                pathname: '/',
+            }
+        ];
+
+        let { user } = req.session;
+        let { permissions: perms } = user;
+
+        if (perms['control_actis']) {
+            nav.push({
+                name: 'Activities',
+                pathname: '/actis',
+            });
+        }
+        if (perms['control_assis']) {
+            nav.push({
+                name: 'Assistants',
+                pathname: '/assis',
+            });
+        }
+        if (perms['control_users']) {
+            nav.push({
+                name: 'Users',
+                pathname: '/users',
+            });
+        }
+        if (user.admin) {
+            nav.push({
+                name: 'Languages',
+                pathname: '/langs',
+            });
+        }
+
+        nav.push({
+            name: 'Logout',
+            pathname: '/logout',
+        });
+
+        res.chassis.nav = nav;
+
+        res.chassis.virtualPath = req.path.split('/').filter(Boolean).join('/');
+
+    }
     next();
 }

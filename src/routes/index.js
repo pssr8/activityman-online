@@ -19,8 +19,8 @@
 const { Router } = require("express");
 let router = new Router();
 
-router.use('/', require('./routes.dashb.js'));
-router.use('/', require('./routes.auth.js'));
-router.use('/', require('./routes.dbapi.js'));
+router.use('/', require('./routes.dashb'));
+router.use('/', require('./routes.auth'));
+router.use('/', require('./routes.dbapi'));
 
 module.exports = router;

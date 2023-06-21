@@ -20,7 +20,9 @@
 extends ./base.pug
 
 block cuerpo 
-    p Languages T*T
+    h1 Languages
+    //- still not working T*T
+    p.muted Languages cannot be edited.
     table(border="1")
         thead
             tr
@@ -35,4 +37,5 @@ block cuerpo
                     td #{lang.code}
                     td #{lang.name}
                     td #{lang.main}
-    pre #{JSON.stringify(langs, null, 4)}
+    if user.admin 
+        pre #{JSON.stringify(langs, null, 4)}
