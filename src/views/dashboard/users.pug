@@ -15,61 +15,82 @@
 //- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-
-
-
 extends ./base.pug
 
 block title 
     | Users
 
 block cuerpo 
+    //- VARIABLES
+    - let setUserUrl="/users/set-user"
+    - let deleteUserUrl="/users/delete-user"
+    - let self = chassis.sessionUser
+    //- APP
     table(border="1") 
         thead 
             tr 
-                th name
-                th username
-                th permissions
-                th isAdmin
-                th delete
+                th Name
+                th Username
+                th Permissions
+                if self.admin
+                    th Is admin
+                th Delete
         tbody 
+            //- ITERATOR
             each eachUser in users
-                mixin allowButton(perm, isallow)
-                    form(action="/set-user", method="post") 
-                        input(type="hidden", name=perm, value=(new Boolean(!isallow)))
-                        input(type="hidden", name="username", value=eachUser.username)
-                        button(type="submit")=(isallow)? 'Disallow' : 'Allow'
-                tr 
-                    td #{eachUser.name}
-                    td #{eachUser.username}
-                    td 
-                        - let {'actis_control': actisC, 'assis_control': assisC, 'users_control': usersC} =eachUser.permissions
-                        div
-                            span Control-actis: #{actisC}
-                            br
-                            if !eachUser.isAdmin()
-                                +allowButton('actis_control', actisC)
-                        div
-                            span Control-assis: #{assisC}
-                            br
-                            if !eachUser.isAdmin()
-                                +allowButton('assis_control', assisC)
-                        div
-                            span Control-users: #{usersC}
-                            br
-                            if !eachUser.isAdmin()
-                                +allowButton('users_control', usersC)
-                    td #{eachUser.isAdmin()}
-                    td
-                        if !eachUser.isAdmin()
-                            form(action="/delete-user", method="post")
+                if self.admin || !eachUser.isAdmin()
+                    mixin allowButton(perm, isallow)
+                        form(action=setUserUrl, method="post") 
+                            input(type="hidden", name=perm, value=(new Boolean(!isallow)))
+                            input(type="hidden", name="username", value=eachUser.username)
+                            button(type="submit")=(isallow)? 'Disallow' : 'Allow'
+                    //- ROW
+                    tr 
+                        //- NAME
+                        td #{eachUser.name}
+                        //- USERNAME
+                        td #{eachUser.username}
+                        //- PERMISSIONS
+                        td 
+                            - let {'actis_control': actisC, 'assis_control': assisC, 'users_control': usersC} =eachUser.permissions
+                            div
+                                //- ACTIS
+                                span Control-actis: #{actisC}
+                                br
+                                if !eachUser.isAdmin()
+                                    +allowButton('actis_control', actisC)
+                            div
+                                //- ASSIS
+                                span Control-assis: #{assisC}
+                                br
+                                if !eachUser.isAdmin()
+                                    +allowButton('assis_control', assisC)
+                            div
+                                //- USERS
+                                span Control-users: #{usersC}
+                                br
+                                if !eachUser.isAdmin()
+                                    +allowButton('users_control', usersC)
+                        //- ADMIN
+                        if self.admin
+                            td 
+                                if eachUser.isAdmin()
+                                    span Yes 👑
+                                else
+                                    span No
+                                    form(action=setUserUrl, method="post") 
+                                        input(type="hidden", name="username", value=eachUser.username)
+                                        input(type="hidden", name="setAdmin", value='true')
+                                        button(type="submit") Make admin
+                        //- DELETE
+                        td
+                            form(action=deleteUserUrl, method="post")
                                 input(type="hidden", name="username", value=eachUser.username) 
                                 button(type="submit") X
-                        else 
-                            span.muted Not allowed
+    hr
     .add-user
-        form(action="/set-user", method="post") 
-            hr
+        p.muted If you want to edit an existing user, enter at least the username. If you want to create a new user, enter at least the username and a password.
+        form(action=setUserUrl, method="post") 
             table 
                 thead 
                     tr 

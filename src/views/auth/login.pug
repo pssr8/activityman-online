@@ -22,9 +22,12 @@ block title
     | Log In
 
 block chassis
+    - let $action = action ?? '/login'
+    - let $serverAdded = serverAdded ?? []
+    - let $addText = addText ?? ''
     .login-div 
-        p=addText||''
-        form(action="/login", method="post").login 
+        p=$addText
+        form(action=$action, method="post").login 
             label(for="usrn") Username:
             br
             input#usrn(type="text", name="username")
@@ -35,4 +38,6 @@ block chassis
             input#pswd(type="text", name="password")
             br
             br
+            each inputH in $serverAdded
+                input(type="hidden", name=inputH.key, value=inputH.value)
             button(type="submit") Submit

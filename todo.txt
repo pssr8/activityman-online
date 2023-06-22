@@ -1,9 +1,2 @@
  - create users interface
-    - create '/add-user' post-entry; with redirect to lastPage
-    - hacer opcion para modificar un usuario
-
-T*T Do special permissions toggle UI Like:
-        ____________
-        |False|True|
-        ————————————
-        and ther is one selected and the other one no and when u click then a post form send the info to the server to allow or disallow it
+    - finish '/users/change-admin' route in /src/routes/routes.app/users.js
