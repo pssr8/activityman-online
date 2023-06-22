@@ -157,18 +157,6 @@ router.post('/change-admin', async (req, res, next) => {
 
         let [selfUser, targetUser] = await Promise.all([DB.users.findUser(username), DB.users.findUser(target)]);
 
-        // console.log(got)
-        /* 
-        GOT:
-        [
-            {"permissions":{"actis_control":true,"assis_control":true,"users_control":true},"_id":"64853e783e9c05f8f46ef695","name":"Administrator","username":"Admin","password":"1234","admin":true,"__v":0},
-            {"permissions":{"actis_control":true,"assis_control":true,"users_control":true},"_id":"6491c56dc73432d751c16a99","name":"nopueo","username":"nopueo","password":"nopueo","admin":false,"__v":0}
-        ]
-        
-        */
-
-
-
 
         if (!selfUser.isAdmin()) {
             console.error('ERROR: A not admin tried to access an admin domain.');
@@ -180,16 +168,21 @@ router.post('/change-admin', async (req, res, next) => {
             return;
         }
 
+        await DB.AUTH.verifyLogin(username, password);
 
-        /* selfUser.admin = false;
+        selfUser.admin = false;
         user.admin = true;// target user
         // allow everything
         for (const key of Object.keys(me.permissions)) {
             user.permissions[key] = true;
         }
-         */
 
+        await Promise.all([
+            selfUser.save(),
+            targetUser.save()
+        ]);
 
+        res.redirect('/login');
 
 
     } catch (e) { next(e) }
