@@ -19,8 +19,7 @@
 const { Router } = require("express");
 let router = new Router();
 
-router.use('/', require('./routes.dashb'));
+router.use('/', require('./routes.app'));
 router.use('/', require('./routes.auth'));
-router.use('/', require('./routes.dbapi'));
 
 module.exports = router;
