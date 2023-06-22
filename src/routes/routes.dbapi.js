@@ -48,7 +48,7 @@ router.post('/set-user', async (req, res, next) => {
             throw 400;
         }
 
-        console.log(`Setting user:\n\tusername: ${username}\n\tname: ${name}\n\tpassword: ${password}\n\tactis_control: ${req.body['actis_control']}\n\tassis_control: ${req.body['assis_control']}\n\tusers_control: ${req.body['users_control']}\n--------------------\n`);
+        // console.log(`Setting user:\n\tusername: ${username}\n\tname: ${name}\n\tpassword: ${password}\n\tactis_control: ${req.body['actis_control']}\n\tassis_control: ${req.body['assis_control']}\n\tusers_control: ${req.body['users_control']}\n--------------------\n`);
 
         const DB = await useDB;
         let me = req.session.user;

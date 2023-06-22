@@ -40,5 +40,5 @@ block cuerpo
                     td #{lang.code}
                     td #{lang.name}
                     td #{lang.main}
-    if user.admin 
+    if chassis.sessionUser.admin 
         pre #{JSON.stringify(langs, null, 4)}
