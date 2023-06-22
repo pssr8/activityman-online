@@ -19,6 +19,7 @@
 const { Router } = require("express");
 const useDB = require('../../DB');
 const { requireAuth } = require("../../auth");
+const { handleResponseCode } = require("../../middlewares/errorHandler");
 const router = new Router();
 
 
@@ -26,12 +27,50 @@ router.get('/', async (req, res, next) => {
     try {
         await requireAuth(req, res, next)
 
+        let { user } = req.session;
+        if (!user.permissions['actis_control']) {
+            throw 403;
+        }
+
         const DB = await useDB;
-        
-        res.render('dashboard/actis', { appChassis: res.chassis, DB });
+
+        let actis = await DB.actis.getAll();
+
+        res.render('dashboard/actis', { chassis: res.chassis, actis });
 
     } catch (e) {
         next(e);
+    }
+})
+
+router.get('/edit/:oid', async (req, res, next) => {
+    try {
+        await requireAuth(req, res, next);
+
+        let { user } = req.session;
+        if (!user.permissions['actis_control']) {
+            throw 403;
+        }
+
+        const DB = await useDB;
+        let { oid } = req.params;
+
+        let acti = await DB.actis.get(oid);
+
+        if (!acti) {
+            throw 404;
+        }
+
+        res.render('dashboard/edit/acti', { title: 'Activity editor', appChassis: res.appChassis, user: req.session.user, acti });
+
+
+    } catch (e) {
+        handleResponseCode(e, res, next, {
+            404: function (res, e) {
+                res.status(404).send("Couldn't find activity with id #" + oid + "")
+                console.log("Couldn't find acti with oid '" + oid + "'. IP-", req.socket.remoteAddress)
+            }
+        });
     }
 })
 

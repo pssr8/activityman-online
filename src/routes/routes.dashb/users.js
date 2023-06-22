@@ -22,6 +22,22 @@ const { requireAuth } = require("../../auth");
 const router = new Router();
 
 
-router.get('/', async (req, res, next) => {})
+router.get('/', async (req, res, next) => {
+    try {
+
+        await requireAuth(req, res, next)
+
+        let { user } = req.session;
+        if (!user.permissions['users_control']) {
+            throw 403;
+        }
+
+        const DB = await useDB;
+        let users = await DB.users.getAll();
+        res.render('dashboard/users', { title: 'Users', appChassis: res.appChassis, user, users });
+    } catch (e) {
+        next(e);
+    }
+})
 
 module.exports = router;

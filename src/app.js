@@ -33,9 +33,8 @@ app.set('port', process.env.PORT)
 // middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-auth.useMiddleware(app);
-app.use('/', express.static(path.join(__dirname, '../public')))
-app.use(require('./middlewares/app-chassis'))
+app.use(auth.middleware()); // creates session
+app.use('/', express.static(path.join(__dirname, '../public'))) // static
 
 // routes
 app.use('/', require('./routes'))

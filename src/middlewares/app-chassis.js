@@ -30,21 +30,21 @@ module.exports = (req, res, next) => {
         ];
 
         let { user } = req.session;
-        let { permissions: perms } = user;
+        let perms = user.permissions;
 
-        if (perms['control_actis']) {
+        if (perms['actis_control']) {
             nav.push({
                 name: 'Activities',
                 pathname: '/actis',
             });
         }
-        if (perms['control_assis']) {
+        if (perms['assis_control']) {
             nav.push({
                 name: 'Assistants',
                 pathname: '/assis',
             });
         }
-        if (perms['control_users']) {
+        if (perms['users_control']) {
             nav.push({
                 name: 'Users',
                 pathname: '/users',

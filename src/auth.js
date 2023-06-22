@@ -21,15 +21,15 @@ const session = require('express-session');
 
 
 const auth = {
-    useMiddleware: function (app) {
-        app.use(session({
+    middleware: function () {
+        return session({
             secret: 'unarequetecontraseña',
             resave: true,
             saveUninitialized: true,
             cookie: {
                 maxAge: 0x9a7ec800 // 1 month
             }
-        }));
+        });
     },
     setLogin: async function (username, password, req) {
         console.log(username, password)

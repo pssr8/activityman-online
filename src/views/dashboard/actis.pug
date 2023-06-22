@@ -22,7 +22,6 @@ block title
     | Activities T*T
 
 block cuerpo 
-    - let actis = await DB.actis.getAll();
     table(border="1")
         thead
             tr
@@ -32,8 +31,9 @@ block cuerpo
             each acti in actis 
                 tr
                     td 
-                        a(href=`/acti-edit/${encodeURIComponent(acti.id)}`) 
-                            button /acti-edit/#{encodeURIComponent(acti.id)}
+                        - let editUrl = `/acti/edit/${encodeURIComponent(acti.id)}`
+                        a(href=editUrl) 
+                            button=editUrl
                     td 
                         each name in acti.name.values
                             div

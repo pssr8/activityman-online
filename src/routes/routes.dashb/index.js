@@ -22,10 +22,15 @@ const { requireAuth } = require("../../auth");
 const router = new Router();
 
 
+/* middlewares */
+router.use(require('../../middlewares/app-chassis'));
+
+/* routers */
+
 router.get('/', async (req, res, next) => {
     try {
         await requireAuth(req, res, next)
-        
+
         res.render('dashboard/home', { title: 'Home', chassis: res.chassis });
 
     } catch (e) {
@@ -34,37 +39,9 @@ router.get('/', async (req, res, next) => {
 })
 
 router.use('/actis', require('./actis'));
+router.use('/assis', require('./assis'));
+router.get('/users', require('./users'));
 
-router.get('/assis', async (req, res, next) => {
-    try {
-        if (await requireAuth(req, res, next)) {
-
-            const DB = await useDB;
-            let assis = await DB.assis.getAll();
-            res.render('dashboard/assis', { title: 'Assistants', appChassis: res.appChassis, user: req.session.user, assis });
-        }
-    } catch (e) {
-        next(e);
-    }
-})
-
-router.get('/users', async (req, res, next) => {
-    try {
-
-        await requireAuth(req, res, next)
-
-        let { user } = req.session;
-        if (!user.permissions['users_control']) {
-            throw 403;
-        }
-
-        const DB = await useDB;
-        let users = await DB.users.getAll();
-        res.render('dashboard/users', { title: 'Users', appChassis: res.appChassis, user, users });
-    } catch (e) {
-        next(e);
-    }
-});
 
 router.get('/langs', async (req, res, next) => {
     try {
@@ -79,50 +56,5 @@ router.get('/langs', async (req, res, next) => {
     }
 })
 
-// EDIT
-router.get('/assi-edit/:oid', async (req, res, next) => {
-    try {
-        await requireAuth(req, res, next)
-
-        const DB = await useDB;
-        let { oid } = req.params;
-        let assi = await DB.assis.get(oid);
-
-        if (!assi) {
-            res.status(404).send("Couldn't find assistant with id #" + oid + "")
-            console.log("Couldn't find assi with oid '" + oid + "'. IP-", req.socket.remoteAddress)
-            throw 404;
-        }
-
-        res.render('dashboard/edit/assi', { title: 'Assistant editor', appChassis: res.appChassis, user: req.session.user, assi });
-
-
-    } catch (e) {
-        next(e);
-    }
-})
-
-router.get('/acti-edit/:oid', async (req, res, next) => {
-    try {
-        await requireAuth(req, res, next);
-
-        const DB = await useDB;
-        let { oid } = req.params;
-
-        let acti = await DB.actis.get(oid);
-
-        if (!acti) {
-            res.status(404).send("Couldn't find activity with id #" + oid + "")
-            console.log("Couldn't find acti with oid '" + oid + "'. IP-", req.socket.remoteAddress)
-            throw 404;
-        }
-
-        res.render('dashboard/edit/acti', { title: 'Activity editor', appChassis: res.appChassis, user: req.session.user, acti });
-
-
-    } catch (e) {
-        next(e);
-    }
-})
 
 module.exports = router;
