@@ -18,7 +18,7 @@
 
 const { Router } = require("express");
 const useDB = require('../../DB');
-const { requireAuth } = require("../../auth");
+const { requireAuth, logout } = require("../../auth");
 const { handleResponseCode } = require("../../middlewares/errorHandler");
 const { checkPermissionsFor, ifIsAdmin } = require('../../functions/dbapi');
 const router = new Router();
@@ -152,6 +152,10 @@ router.post('/change-admin', async (req, res, next) => {
     try {
         await requireAuth(req);
         let { username, password, target } = req.body;
+        
+        if (username != req.session.user.username) {
+            throw 400;
+        }
 
         const DB = await useDB;
 
@@ -171,16 +175,18 @@ router.post('/change-admin', async (req, res, next) => {
         await DB.AUTH.verifyLogin(username, password);
 
         selfUser.admin = false;
-        user.admin = true;// target user
+        targetUser.admin = true;// target user
         // allow everything
-        for (const key of Object.keys(me.permissions)) {
-            user.permissions[key] = true;
+        for (const key of Object.keys(targetUser.permissions)) {
+            targetUser.permissions[key] = true;
         }
 
         await Promise.all([
             selfUser.save(),
             targetUser.save()
         ]);
+
+        logout(req);
 
         res.redirect('/login');
 
