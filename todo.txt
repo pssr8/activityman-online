@@ -1,2 +1,2 @@
- - create users interface
-    - finish '/users/change-admin' route in /src/routes/routes.app/users.js
+ - create-assis-interface
+ - create-actis-interface
