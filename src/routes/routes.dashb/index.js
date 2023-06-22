@@ -40,7 +40,7 @@ router.get('/', async (req, res, next) => {
 
 router.use('/actis', require('./actis'));
 router.use('/assis', require('./assis'));
-router.get('/users', require('./users'));
+router.use('/users', require('./users'));
 
 
 router.get('/langs', async (req, res, next) => {
@@ -49,7 +49,7 @@ router.get('/langs', async (req, res, next) => {
 
             const DB = await useDB;
             let langs = await DB.langs.list();
-            res.render('dashboard/langs', { title: 'Languages', appChassis: res.appChassis, user: req.session.user, langs });
+            res.render('dashboard/langs', { chassis: res.chassis, langs });
         }
     } catch (e) {
         next(e);

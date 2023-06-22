@@ -34,7 +34,7 @@ router.get('/', async (req, res, next) => {
 
         const DB = await useDB;
         let users = await DB.users.getAll();
-        res.render('dashboard/users', { title: 'Users', appChassis: res.appChassis, user, users });
+        res.render('dashboard/users', { çhassis: res.chassis, users });
     } catch (e) {
         next(e);
     }
