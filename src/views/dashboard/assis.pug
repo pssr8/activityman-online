@@ -20,7 +20,7 @@ extends ./base.pug
 
 
 block append title 
-    | Activities T*T
+    | Assistansts T*T
 
 block cuerpo 
     table(border="1")
@@ -38,9 +38,10 @@ block cuerpo
             each assi in assis 
                 tr
                     td 
-                        a(href=`/assi-edit/${encodeURIComponent(assi.id)}`) 
-                            button /assi-edit/#{encodeURIComponent(assi.id)}
-                    td #{assi.name.first}
+                        - let editUrl = `/assi/edit/${encodeURIComponent(assi.id)}`;
+                        a(href=editUrl) 
+                            button=editUrl
+                    td #{assi.name.first} #{assi.name.last}
                     td #{assi.contacts}
                     td #{assi.address}
                     td #{assi.grade}
