@@ -50,17 +50,20 @@ function getPath(index = 2) {
     };
 }
 
-
-require('console-stamp')(logger, {
-    format: "\n:date().green :getPath().cyan :label().underline.bgWhite.black\n(->).yellow",
-    tokens: {
-        getPath: () => {
-            let path = getPath(3)
-            return `[${path.func}:${path.file}]`;
+const init = () => {
+    require('console-stamp')(logger, {
+        format: "\n:date().green :getPath().cyan :label().underline.bgWhite.black\n(->).yellow",
+        tokens: {
+            getPath: () => {
+                let path = getPath(3)
+                return `[${path.func}:${path.file}]`;
+            }
         }
-    }
-});
+    });
+}
 
 /* ADD geoip T*T */
 
+module.exports = init
+module.exports.init = init;
 module.exports.getPath = getPath;

@@ -18,6 +18,9 @@
 
 
 const app = require("./app");
+const logger = require('./functions/logger')
+
+logger();
 
 const port = app.get('port');
 app.listen(port, () => {
