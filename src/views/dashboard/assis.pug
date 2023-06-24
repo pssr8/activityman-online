@@ -35,7 +35,9 @@ block cuerpo
                 th Sexe
                 th Note
         tbody
+            //- ITERATOR
             each assi in assis 
+                //- ROW
                 tr
                     td 
                         - let editUrl = `/assi/edit/${encodeURIComponent(assi.id)}`;
