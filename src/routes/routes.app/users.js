@@ -26,13 +26,7 @@ const router = new Router();
 
 router.get('/', async (req, res, next) => {
     try {
-
-        await requireAuth(req, res, next)
-
-        let { user } = req.session;
-        if (!user.permissions['users_control']) {
-            throw 403;
-        }
+        await checkPermissionsFor(['users_control'], req);
 
         const DB = await useDB;
         let users = await DB.users.getAll();

@@ -19,20 +19,18 @@
 const { Router } = require("express");
 const useDB = require('../../DB');
 const { requireAuth } = require("../../auth");
+const { checkPermissionsFor } = require("../../functions/dbapi");
 const router = new Router();
 
 
 router.get('/', async (req, res, next) => {
     try {
-        await requireAuth(req, res, next)
-
-        let { user } = req.session;
-        if (!user.permissions['users_control']) {
-            throw 403;
-        }
+        await checkPermissionsFor(['assis_control'], req);
 
         const DB = await useDB;
+
         let assis = await DB.assis.getAll();
+
         res.render('dashboard/assis', { chassis: res.chassis, assis });
 
     } catch (e) {
@@ -51,6 +49,7 @@ router.get('/edit/:oid', async (req, res, next) => {
 
         const DB = await useDB;
         let { oid } = req.params;
+
         let assi = await DB.assis.get(oid);
 
         if (!assi) {
@@ -63,8 +62,8 @@ router.get('/edit/:oid', async (req, res, next) => {
     } catch (e) {
         handleResponseCode(e, res, next, {
             404: function (res, e) {
-                res.status(404).send("Couldn't find activity with id #" + oid + "")
-                console.log("Couldn't find acti with oid '" + oid + "'. IP-", req.socket.remoteAddress)
+                res.status(404).send("Couldn't find the assistant you are looking for. If you think it is an error, communicate it to the administrator.")
+                console.serror(`Couldn't find assi with OID ${oid}`)
             }
         });
     }

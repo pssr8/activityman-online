@@ -32,7 +32,7 @@ async function checkPermissionsFor(perms, req) {
     /* If doesn't have enough permissions */
     for (const perm in perms) {
         if (req.session.user.permissions[perm] === false) {
-            console.error('ERROR: Missing required permission: "' + perm + '".');
+            console.serror(req, 'ERROR: Missing required permission: "' + perm + '".');
             throw 403;
         }
     }

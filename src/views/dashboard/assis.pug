@@ -42,9 +42,12 @@ block cuerpo
                     td 
                         - let editUrl = `/assi/edit/${encodeURIComponent(assi.id)}`;
                         a(href=editUrl) 
-                            button=editUrl
+                            button 📝
                     td #{assi.name.first} #{assi.name.last}
-                    td #{assi.contacts}
+                    td
+                        each contact in assi.contacts
+                            .contact 
+                                #{assi.contacts}
                     td #{assi.address}
                     td #{assi.grade}
                     td #{assi.birth}
