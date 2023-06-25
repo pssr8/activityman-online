@@ -1,1 +1,2 @@
  - create assis interface
+    - hacer que /edit/assi funcione
