@@ -29,7 +29,7 @@ const errorHandler = function (err, req, res, next) {
         /* if err has a handler */
         if (err in defaultMessages) {
             const message = defaultMessages[err];
-            console.error('thrown err: ' + err);
+            console.serror(req, 'thrown err: ' + err);
 
             /* if handler is a function */
             if (typeof message == 'function') {

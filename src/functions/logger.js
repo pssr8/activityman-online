@@ -16,8 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { __express } = require('pug');
-
 // const fs = require('fs');
 // const output = fs.createWriteStream('./stdout.log');
 // const errorOutput = fs.createWriteStream('./stderr.log');
@@ -31,12 +29,13 @@ const { __express } = require('pug');
 /* T*T add logger to all console.logs */
 
 const consoleStamp = require('console-stamp');
+const chalk = require('chalk');
 
 let logger = console;
 
 function getPath(index = 2) {
     let error = new Error();
-    let regex = /^(?!.*(node|logger)).*at (.*) .*\/(.*\.js)/gm;
+    let regex = /^(?!.*(node)).*at (.*) .*\/(.*\.js)/gm;
     let res;
     for (let i = 0; i < index; i++) {
         let newRes = regex.exec(error.stack);
@@ -46,30 +45,43 @@ function getPath(index = 2) {
         res = newRes;
         regex.lastIndex++;
     }
-    return {
+    return res? {
         func: res[2],
         file: res[3]
-    };
+    }: null;
+}
+
+function parseServerLog(req) {
+    let { ipInfo, url } = req;
+
+    return `${chalk.bgBlue(`[${
+        (ipInfo.error)? `${ipInfo.ip}|${ipInfo.error}`
+        : `${ipInfo.ip}`
+    }]`)} ${chalk.gray(`[${
+        url
+    }]`)}`;
 }
 
 const init = () => {
-    
+
     logger.server_log = function (msg) {
         logger.log(...msg);
-        logger.org.log(req.ipInfo);
     }
-    
+
     logger.slog = function (req, ...msg) {
+        let serverLog = parseServerLog(req);
+        logger.org.log(serverLog);
         logger.server_log(msg);
     }
 
     logger.server_error = function (msg) {
-        logger.log(...msg);
-        logger.org.log(req);
+        logger.org.error(...msg);
     }
-    
+
     logger.serror = function (req, ...msg) {
-        logger.server_log(msg);
+        let serverLog = parseServerLog(req);
+        logger.org.log(serverLog);
+        logger.server_error(msg);
     }
 
     /* Default logger */
@@ -78,7 +90,7 @@ const init = () => {
         tokens: {
             getPath: () => {
                 let path = getPath(3);
-                return `[${path.file}:${path.func}]`;
+                return path? `[${path.file}:${path.func}]` : '[null]';
             }
         },
         extend: {
@@ -93,6 +105,8 @@ const init = () => {
     });
 
     logger.debug = logger.org.debug;
+    console.slog = logger.slog;
+    console.serror = logger.serror;
 
 }
 
