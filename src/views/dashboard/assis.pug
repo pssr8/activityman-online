@@ -23,33 +23,159 @@ block append title
     | Assistansts T*T
 
 block cuerpo 
-    table(border="1")
-        thead
-            tr
-                th Edit
-                th Name
-                th Contacts
-                th Address
-                th Grade
-                th Birth
-                th Sexe
-                th Note
-        tbody
-            //- ITERATOR
-            each assi in assis 
-                //- ROW
+    noscript 
+        .muted.
+            JavaScript is disabled. This app works better with javascript enabled
+        table(border="1")
+            thead
                 tr
-                    td 
-                        - let editUrl = `/assi/edit/${encodeURIComponent(assi.id)}`;
-                        a(href=editUrl) 
-                            button 📝
-                    td #{assi.name.first} #{assi.name.last}
-                    td
-                        each contact in assi.contacts
-                            .contact 
-                                #{assi.contacts}
-                    td #{assi.address}
-                    td #{assi.grade}
-                    td #{assi.birth}
-                    td #{assi.sexe}
-                    td #{assi.note}
+                    th Edit
+                    th Name
+                    th Contacts
+                    th Address
+                    th Grade
+                    th Birth
+                    th Sexe
+                    th Note
+            tbody
+                //- ITERATOR
+                each assi in assis 
+                    //- ROW
+                    tr
+                        //- EDIT
+                        td
+                            - let editUrl = `/assi/edit/${encodeURIComponent(assi.id)}`;
+                            a(href=editUrl) 
+                                button 📝
+                        //- NAME
+                        td #{assi.name.first} #{assi.name.last}
+                        //- CONTACT
+                        td
+                            each contact in assi.contacts
+                                .contact 
+                                    //- Contact lien
+                                    span #{contact.lien}: 
+                                    //- Contact name
+                                    span #{contact.name}
+                                    br
+                                    //- Contact phones
+                                    each phone in contact.phone
+                                        span=phone.note
+                                        |&nbsp;
+                                        span=phone.number 
+                                    //- Contact emails
+                                    each email in contact.email
+                                        span=email.note
+                                        |&nbsp;
+                                        span=email.address 
+                                hr
+                            else 
+                                span.muted No contacts
+                        //- ADDRESS
+                        td
+                            - let a = assi.address
+                            .address 
+                                //- PROVINCE
+                                span Province: #{a.province}
+                                br
+                                //- CITY
+                                span City: #{a.city}
+                                br
+                                //- STREET
+                                span Street: #{a.street}
+                                br
+                                //- POSTALCODE
+                                span Postal code: #{a.postalcode}
+                        //- GRADE
+                        td #{assi.grade}
+                        //- BIRTH
+                        td #{assi.birth}
+                        //- SEXE
+                        td #{assi.sexe}
+                        //- NOTE
+                        td #{assi.note}    
+        .grades-tables
+            h2 Grades
+            table(border="1")
+                tr
+                    th(colspan="2")
+                        h3 Preschool
+                tr
+                    td 1
+                    td Pre-Kindergarten
+                tr
+                    td 2
+                    td Kindergarten
+                tr
+                    th(colspan="2")
+                        h3 Primary
+                tr 
+                    th(colspan="2") One
+                tr 
+                    td 3
+                    td Grade 1
+                tr 
+                    td 4
+                    td Grade 2
+                tr 
+                    th(colspan="2") Two
+                tr 
+                    td 5
+                    td Grade 3
+                tr 
+                    td 6
+                    td Grade 4
+                tr 
+                    th(colspan="2") Three
+                tr 
+                    td 7
+                    td Grade 5
+                tr 
+                    td 8
+                    td Grade 6
+                tr
+                    th(colspan="2")
+                        h3 Secondary
+                tr 
+                    th(colspan="2") One
+                tr 
+                    td 9
+                    td Secondary I
+                tr 
+                    td 10
+                    td Secondary II
+                tr 
+                    th(colspan="2") Two
+                tr 
+                    td 11
+                    td Secondary III
+                tr 
+                    td 12
+                    td Secondary IV
+                tr 
+                    td 13
+                    td Secondary V
+                tr
+                    th(colspan="2")
+                        h3 Other
+                tr
+                    td 14
+                    td Other
+                tr
+                    td 0
+                    td no school
+        .sexes-tables
+            h2 Gender
+            table(border="1")
+                tr
+                    th(colspan="2")
+                        h3 Gender
+                tr
+                    td 1
+                    td Male
+                tr
+                    td 2
+                    td Female
+                tr
+                    td 0
+                    td Not specified

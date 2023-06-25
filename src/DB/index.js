@@ -111,7 +111,7 @@ const DBLoad = async () => {
                     let assiCreate = Assi.create({
                         name: { first: '', last: '' },
                         contacts: [
-                            {
+                            /* {
                                 lien: '',
                                 name: '',
                                 phone: [
@@ -120,7 +120,7 @@ const DBLoad = async () => {
                                 email: [
                                     { address: '', note: '' }
                                 ]
-                            }
+                            } */
                         ],
                         address: {
                             province: '',
