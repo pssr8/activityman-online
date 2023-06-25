@@ -18,7 +18,7 @@
 
 
 const express = require('express');
-const { sensitiveHeaders } = require('http2');
+const expressip = require('express-ip');
 const app = express();
 const path = require('path');
 const auth = require('./auth');
@@ -31,12 +31,13 @@ app.set('port', process.env.PORT)
 
 
 // middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // parse body
+app.use(express.urlencoded({ extended: true })); // parse body
+app.use(expressip().getIpInfoMiddleware); // ipinfo
 app.use(auth.middleware()); // creates session
-app.use('/', express.static(path.join(__dirname, '../public'))) // static
 
 // routes
+app.use('/', express.static(path.join(__dirname, '../public'))) // static
 app.use('/', require('./routes'))
 
 // errorHandler

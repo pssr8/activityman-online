@@ -19,10 +19,10 @@
 
 const app = require("./app");
 const logger = require('./functions/logger')
-
 logger();
+
 
 const port = app.get('port');
 app.listen(port, () => {
-    console.log('ActivityMan Online\n\n\tListening on port ' + port + '\n\n')
+    console.log(`ActivityMan Online\n\n\tListening on http://localhost:${port}/ \n\n`)
 })

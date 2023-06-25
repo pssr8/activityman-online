@@ -30,11 +30,13 @@ const { __express } = require('pug');
 
 /* T*T add logger to all console.logs */
 
-const logger = console;
+const consoleStamp = require('console-stamp');
+
+let logger = console;
 
 function getPath(index = 2) {
     let error = new Error();
-    let regex = /^(?!.*(node)).*at (.*) .*\/(.*\.js)/gm;
+    let regex = /^(?!.*(node|logger)).*at (.*) .*\/(.*\.js)/gm;
     let res;
     for (let i = 0; i < index; i++) {
         let newRes = regex.exec(error.stack);
@@ -51,15 +53,47 @@ function getPath(index = 2) {
 }
 
 const init = () => {
-    require('console-stamp')(logger, {
-        format: "\n:date().green :getPath().cyan :label().underline.bgWhite.black\n(->).yellow",
+    
+    logger.server_log = function (msg) {
+        logger.log(...msg);
+        logger.org.log(req.ipInfo);
+    }
+    
+    logger.slog = function (req, ...msg) {
+        logger.server_log(msg);
+    }
+
+    logger.server_error = function (msg) {
+        logger.log(...msg);
+        logger.org.log(req);
+    }
+    
+    logger.serror = function (req, ...msg) {
+        logger.server_log(msg);
+    }
+
+    /* Default logger */
+    consoleStamp(logger, {
+        format: ":label().underline.bgWhite.black :getPath().yellow :date().gray\n:msg",
         tokens: {
             getPath: () => {
-                let path = getPath(3)
-                return `[${path.func}:${path.file}]`;
+                let path = getPath(3);
+                return `[${path.file}:${path.func}]`;
             }
-        }
+        },
+        extend: {
+            error: 1,
+            warn: 2,
+            info: 3,
+            log: 4,
+            debug: 5,
+            server_log: 4,
+            server_error: 1,
+        },
     });
+
+    logger.debug = logger.org.debug;
+
 }
 
 /* ADD geoip T*T */

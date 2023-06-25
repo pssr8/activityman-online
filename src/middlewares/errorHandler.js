@@ -47,10 +47,10 @@ const errorHandler = function (err, req, res, next) {
         }
 
         /* else if err is just an Error */
-        console.error(err.stack);
+        console.serror(req, err.stack);
         res.status(500).send('Something went wrong.');
     } catch (err2) {
-        console.error(err2.stack);
+        console.error(req, err2.stack);
         res.status(500).send('Something went wrong.');
     }
 };
