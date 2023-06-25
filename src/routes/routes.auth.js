@@ -40,7 +40,7 @@ router.post('/login', async (req, res, next) => {
     try {
         let {username, password} = req.body
         await auth.setLogin(username, password, req);
-        console.slog('Logged in');
+        console.slog(req, 'Logged in');
         res.redirect(req.session.lastPage || '/');
     } catch (e) {
         handleResponseCode(e, res, next, {

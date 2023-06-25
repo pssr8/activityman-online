@@ -18,6 +18,7 @@
 
 const useDB = require('./DB');
 const session = require('express-session');
+const { handleResponseCode } = require('./middlewares/errorHandler');
 
 
 const auth = {
@@ -32,12 +33,12 @@ const auth = {
         });
     },
     setLogin: async function (username, password, req) {
-        console.log(username, password)
+        console.slog(req, username, password)
 
         const error = 401/* new Error('Incorrect Username or Password!') */;
 
         if (!username || !password) {
-            console.log('Not username or password provided')
+            console.serror(req, 'Not username or password provided')
             throw error;
         }
 
@@ -49,7 +50,7 @@ const auth = {
             req.session.loggedin = true;
             req.session.user = user;
         } catch (e) {
-            console.error(e);
+            console.serror(req, e);
             req.session.loggedin = false;
             req.session.user = null;
             throw error;
@@ -65,7 +66,6 @@ const auth = {
         // console.log(req.session);
         if (!req.session.loggedin) {
             req.session.lastPage = req.url || '/';
-            console.log('Not logged in')
             throw 401;
         }
 

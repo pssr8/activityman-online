@@ -36,7 +36,7 @@ let logger = console;
 function getPath(index = 2) {
     let error = new Error();
     let regex = /^(?!.*(node)).*at (.*) .*\/(.*\.js)/gm;
-    let res;
+    let res = null;
     for (let i = 0; i < index; i++) {
         let newRes = regex.exec(error.stack);
         if (newRes == null) {
@@ -52,11 +52,18 @@ function getPath(index = 2) {
 }
 
 function parseServerLog(req) {
-    let { ipInfo, url } = req;
+    let { ipInfo, url, session } = req;
+
+    if (!ipInfo || !url || !session) {
+        throw new Error(`Parameter 'req is missing required properties.`)
+    }
 
     return `${chalk.bgBlue(`[${
         (ipInfo.error)? `${ipInfo.ip}|${ipInfo.error}`
         : `${ipInfo.ip}`
+    }]`)} ${chalk.magenta.underline(`[${
+        session.loggedin? session.user.username
+        : `ø`
     }]`)} ${chalk.gray(`[${
         url
     }]`)}`;
@@ -74,14 +81,14 @@ const init = () => {
         logger.server_log(msg);
     }
 
-    logger.server_error = function (msg) {
+    logger.server_error = function (...msg) {
         logger.org.error(...msg);
     }
 
     logger.serror = function (req, ...msg) {
         let serverLog = parseServerLog(req);
         logger.org.log(serverLog);
-        logger.server_error(msg);
+        logger.server_error(...msg);
     }
 
     /* Default logger */
@@ -90,6 +97,9 @@ const init = () => {
         tokens: {
             getPath: () => {
                 let path = getPath(3);
+                if (path.file == 'logger.js') {
+                    path = getPath(4);
+                }
                 return path? `[${path.file}:${path.func}]` : '[null]';
             }
         },
@@ -104,7 +114,7 @@ const init = () => {
         },
     });
 
-    logger.debug = logger.org.debug;
+    logger.debug = (...msgs) => logger.org.debug('>', ...msgs);
     console.slog = logger.slog;
     console.serror = logger.serror;
 

@@ -310,7 +310,7 @@ const DBLoad = async () => {
                 try {
                     let user = await DB.users.findUser(username);
                     // console.dir(user);
-                    console.log('login: ', user.password === password, user.password, password);
+                    console.debug('login: ', user.password === password, user.password, password);
                     if (user.password === password) {
                         return user;
                     } else {
